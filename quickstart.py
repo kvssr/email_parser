@@ -44,10 +44,8 @@ def get_links():
   try:
     # Call the Gmail API
     service = build("gmail", "v1", credentials=creds)
-    # results = service.users().labels().list(userId="me").execute()
-    results = service.users().messages().list(userId='me').execute()
-    print(results)
-    # labels = results.get("labels", [])
+    #TODO: Fill in the sender to filter the right emails
+    results = service.users().messages().list(userId='me', q='from:{email}').execute()
     messages = results.get('messages',[])
 
     # iterate through all the messages 
@@ -59,15 +57,7 @@ def get_links():
         try: 
             # Get value of 'payload' from dictionary 'txt' 
             payload = txt['payload'] 
-            headers = payload['headers'] 
-  
-            # Look for Subject and Sender Email in the headers 
-            for d in headers: 
-                if d['name'] == 'Subject': 
-                    subject = d['value'] 
-                if d['name'] == 'From': 
-                    sender = d['value'] 
-  
+            
             # The Body of the message is in Encrypted format. So, we have to decode it. 
             # Get the data and decode it with base 64 decoder. 
             parts = payload.get('parts')[0] 
